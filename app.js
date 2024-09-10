@@ -1,9 +1,11 @@
 const readlineSync = require("readline-sync");
 const customerModule = require("./src/customerManager");
 const productModule = require("./src/productManager");
-const orderModule = require("./src/orderManager")
+const orderModule = require("./src/orderManager");
+
 
 async function main() {
+  
   //    const customer = await productModule.getProduct()
   //    console.log(customer)
 
@@ -148,34 +150,71 @@ async function main() {
     
                 case '2':
                     const datePurchase = readlineSync.question('Entrez la date de la commande: ')
-                    const customerId = readlineSync.questionInt(`l'id du client:  `)
-                    const deliveryAddress = readlineSync.question(`l'address de livraison:  `)
-                    const track = readlineSync.question('numero de la commande: ')
-                    const statusOrder = readlineSync.question('status de la commande: ')
-
-                     const orderId = await orderModule.addOrder(datePurchase, customerId, deliveryAddress, track, statusOrder)
-                    console.log(`La commande ajouté avec l'id ${orderId}`);
-                  //   const cmd = true
-                  //   while (cmd) {
-                  //     console.log('Entrez les details de la commande: ')
-                  //  const produitId = readlineSync.question(`Entrez l'id du produit`)
-                   
-                  //  const price = readlineSync.question(`Entrez le prix du produit`)
-                  //  const tmp = readlineSync.question('Appuyer sur : \n A pour ajouter un autre produit; \n S pour enregistrer la commande; \n Z pour quitter;')
-                  //  if (tmp === 'A') {
-                  //   cmd = true
                     
-                  //  }else if(tmp === 'S'){
-                  //   cmd = false
-                  //  }
-                  //  else{
-                  //   main()
-                  //  }
-                  //  return cmd
+                    const deliveryAddress = readlineSync.question(`l'address de livraison:  `)
+                    const customerId = readlineSync.questionInt(`l'id du client:  `)
+                    const client = orderModule.getClient
+                    for(let i = 0; i< client.length; i++){
+                      if(customerId === client[i]){
+                        customerId = client[i]
+                        return customerId
+                      }
+                      else{
+                        console.log("Ce client n'existe pas")
+                      }
+                    }
+                    
+                    const track = readlineSync.question('numero de la commande: ')
+
+                    const statusOrder = readlineSync.question('status de la commande: ')
+                    const commande = []
+                    commande.push(datePurchase, deliveryAddress, customerId, track, statusOrder)
+                    console.log(commande);
+                    
+
+                    const cmd = true
+                    const details = {}
+                    const mesDetails = []
+                    while (cmd = true) {
+
+                    
+                      console.log('Entrez  details de la commande: ')
+                    details.produitId = readlineSync.question(`Entrez l'id du produit`)
+                   const produit = productModule.getProduit
+                    for(let i = 0; i< produit.length; i++){
+                      if(details.produitId === produit[i]){
+                        details.produitId = produit[i]
+                        return details.produitId
+                      }
+                      else{
+                        console.log("Ce produit n'existe pas")
+                      }
+                    }
+                   
+                    details.price = readlineSync.question(`Entrez le prix du produit`)
+                    details.quatity = readlineSync.question(`Entrez la quantité du produit`)
+
+                    mesDetails.push(details)
+                    console.log(details)
+
+                   const tmp = readlineSync.question('Appuyer sur : \n A pour ajouter un autre produit; \n S pour enregistrer la commande; \n Z pour quitter;')
+                   if (tmp === 'A') {
+                    cmd = true
+                    
+                   }else if(tmp === 'S'){
+                    
+                   }
+                   else{
+                    main()
+                   }
+                   return cmd
                 
 
 
-                  //   }
+                    }
+                    //  const orderId = await orderModule.addOrder(datePurchase,  deliveryAddress,customerId, track, statusOrder)
+                    // console.log(`La commande ajouté avec l'id ${orderId}`);
+                  
                     
 
                     break;

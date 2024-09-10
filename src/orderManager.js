@@ -11,11 +11,22 @@ async function getOrder() {
         connection.release();
     }
 }
-    
-async function addOrder(date_purchase, customer_id, delivery_address, track_number, status){
+async function getClient(){
+    const connection = await pool.getConnection()
+   const [client] = await connection.execute('SELECT  id FROM customers')
+  
+   const ids = client.map(clien => clien.id); 
+    console.log(ids);
+    return ids;
+
+}
+
+
+
+async function addOrder(date_purchase, delivery_adress, customer_id, track_number, status){
     const connection = await pool.getConnection()
     try {
-        const [result] = await connection.execute('INSERT INTO purchase_orders (date_purchase, customer_id, delivery_address, track_number, status) VALUES (?, ?, ?, ?, ?)', [date_purchase, customer_id, delivery_address, track_number, status])
+        const [result] = await connection.execute('INSERT INTO purchase_orders (date_purchase, delivery_adress, customer_id, track_number, status) VALUES (?, ?, ?, ?, ?)', [date_purchase,  delivery_adress,customer_id, track_number, status])
         return result.insertId
     } catch (error) {
         throw error
@@ -55,6 +66,7 @@ module.exports = {
     getOrder,
     addOrder,
     destroyOrder,
-    updateOrder
+    updateOrder,
+    getClient
 
 }
