@@ -15,7 +15,7 @@ async function getPayement() {
 async function addPayement(order_id, date_payement, amount, payement_method){
     const connection = await pool.getConnection()
     try {
-        const [result] = await connection.execute('INSERT INTO payements (order_id, date_payement, amount, payement_method)', [order_id, date_payement, amount, payement_method])
+        const [result] = await connection.execute('INSERT INTO payements (order_id, date_payement, amount, payement_method) VALUE (?, ?, ?, ?)', [order_id, date_payement, amount, payement_method])
         return result.insertId
     } catch (error) {
         throw error

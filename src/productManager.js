@@ -1,10 +1,12 @@
 const pool = require ('./db')
+
+
 async function getProduit(){
     const connection = await pool.getConnection()
    const [produit] = await connection.execute('SELECT  id FROM products')
   
    const ids = produit.map(produ => produ.id); 
-    console.log(ids);
+    
     return ids;
 
 }
