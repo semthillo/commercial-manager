@@ -2,10 +2,10 @@ const readlineSync = require("readline-sync");
 const customerModule = require("./src/customerManager");
 const productModule = require("./src/productManager");
 const orderModule = require("./src/orderManager");
+const paymentModule = require("./src/payementManager")
 
 async function main() {
-  //    const customer = await productModule.getProduct()
-  //    console.log(customer)
+ 
 
   try {
     console.log("Bienvenue dans ManaerApp !");
@@ -13,9 +13,8 @@ async function main() {
     console.log("1. Gerer les Clients");
     console.log("2. Gerer les Produits");
     console.log("3. Gerer les Commande ");
-    console.log("4. Gerer les Details de Commande");
-    console.log("5. Gerer Les Payement");
-    console.log("6. Quitter");
+    console.log("4. Gerer Les Payement");
+    console.log("5. Quitter");
 
     const choice = readlineSync.question("Choisissez une option : ");
 
@@ -367,7 +366,7 @@ async function main() {
                 `Entrez l'id du produit : `
               );
 
-              // Validation des entrées pour le prix et la quantité
+              
               details.newPrice = readlineSync.question(
                 `Entrez le prix du produit (nombre) : `
               );
@@ -396,14 +395,14 @@ async function main() {
               );
               switch (newTmp.toUpperCase()) {
                 case "A":
-                  break; // Continue à ajouter des détails
+                  break; 
                 case "S":
-                  newcCmd = false; // Sortir de la boucle pour enregistrer la commande
+                  newcCmd = false; 
                   break;
                 case "Z":
                   console.log("Commande annulée.");
-                  main(); // Retourner au menu principal
-                  return; // Stopper l'exécution de cette partie
+                  main();
+                  return; 
                 default:
                   console.log("Option non reconnue. Veuillez réessayer.");
                   break;
@@ -422,7 +421,7 @@ async function main() {
             );
             console.log(`Commande modifiée, ID : ${updateId}`);
 
-            // Mise à jour des nouveaux détails
+            
             for (let i = 0; i < mesNewDetails.length; i++) {
               const detail = mesNewDetails[i];
               console.log(
@@ -431,7 +430,7 @@ async function main() {
 
               try {
                 await orderModule.addDetail(
-                  updateId, // Utilisation de l'ID de la commande modifiée
+                  updateId, 
                   detail.produitId,
                   detail.newQuantity,
                   detail.newPrice
@@ -447,36 +446,12 @@ async function main() {
             );
             break;
 
-            // const mesADetails = await orderModule.getDetailByOrderId(updateId);
-
-            // const mesNewDetails = mesADetails.forEach(element => {
-            //   console.log(element);
-
-            // });
-            // console.log(mesNewDetails);
-
-            const newBarecode = readlineSync.question(
-              "Nouveau code barre du produit: "
-            );
-
-            await productModule.updateProduct(
-              updateId,
-              newName,
-              newDescription,
-              newPrice,
-              newStock,
-              newcategory,
-              newBarecode,
-              newStatus
-            );
-            console.log("produit modifié");
-            break;
           case "4":
             const deleteId = readlineSync.question(
-              "ID du client à supprimer: "
+              "ID de la commande à supprimer: "
             );
-            await productModule.destroyProduct(deleteId);
-            console.log("Produit supprimé");
+            await orderModule.destroyOrder(deleteId);
+            console.log("commande supprimé");
             break;
           case "5":
             main();
@@ -491,14 +466,14 @@ async function main() {
         }
         break;
 
-      case "5":
+      case "4":
         console.log("1. Liste des payements");
         console.log("2. Ajouter un payement");
         console.log("3. Modifier un payement");
         console.log("4. Supprimer un payement");
         console.log("5. Retourner Au Menu principal");
         console.log("6. Quitter");
-        const choixP = "";
+        const choixP = readlineSync.question("Choisissez une option :");
         switch (choixP) {
           case "1":
             const payments = await paymentModule.getPayement();
@@ -506,14 +481,12 @@ async function main() {
             break;
 
           case "2":
-            // Récupérer les commandes disponibles pour sélectionner l'order_id
-            const orders = await orderModule.getOrders();
-            console.log("Commandes disponibles:", orders);
+            
             const orderId = readlineSync.question(
               "Entrez l'ID de la commande : "
             );
             const datePayement = readlineSync.question(
-              "Date du paiement (YYYY-MM-DD): "
+              "Date du paiement: "
             );
             const amount = readlineSync.questionFloat("Montant du paiement : ");
             const payementMethod = readlineSync.question(
@@ -527,22 +500,16 @@ async function main() {
               payementMethod
             );
             console.log(`Paiement ajouté avec l'ID ${paymentId}`);
+          
             break;
-
+       
           case "3":
             const updatePayId = readlineSync.question(
               `ID du paiement à modifier : `
             );
 
-            // Récupérer les commandes disponibles pour sélectionner l'order_id
-            const availableOrders = await orderModule.getOrders();
-            console.log("Commandes disponibles:", availableOrders);
-
-            const newOrderId = readlineSync.question(
-              "Entrez le nouvel ID de la commande : "
-            );
             const newDatePayement = readlineSync.question(
-              "Nouvelle date du paiement (YYYY-MM-DD): "
+              "Nouvelle date du paiement : "
             );
             const newAmount = readlineSync.questionFloat(
               "Nouveau montant du paiement : "
@@ -553,7 +520,7 @@ async function main() {
 
             await paymentModule.updatePayement(
               updatePayId,
-              newOrderId,
+             
               newDatePayement,
               newAmount,
               newPayementMethod
@@ -570,7 +537,7 @@ async function main() {
             break;
 
           case "5":
-            main(); // Retour au menu principal
+            main(); 
             break;
 
           case "6":
@@ -581,6 +548,14 @@ async function main() {
             console.log("Veuillez choisir une option entre 1 et 6");
             break;
         }
+        break;
+      case "5":
+        console.log("Au revoir !");
+        break;
+
+      default:
+          console.log("Veuillez choisir une option entre 1 et 6");
+          break;
     }
   } catch (error) {}
 }

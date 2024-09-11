@@ -66,29 +66,52 @@ async function addOrder(order) {
 
 
 async function updateOrder(id, date_purchase, customer_id, delivery_address, track_number, status) {
-    const connection = await pool.getConnection()
+    const connection = await pool.getConnection();
     try {
-        const [result] = await connection.execute('UPDATE purchase_orders SET  date_purchase = ?, customer_id = ?, delivery_address = ?, track_number = ?, status = ?', [ date_purchase, customer_id, delivery_address, track_number, status, id,])
-        return result.affectedRows
+        
+        const [orderExists] = await connection.execute('SELECT 1 FROM purchase_orders WHERE id = ?', [id]);
+        if (orderExists.length === 0) {
+            throw new Error(`Commande avec l'ID ${id} introuvable.`);
+        }
+
+        const [result] = await connection.execute(
+            'UPDATE purchase_orders SET date_purchase = ?, customer_id = ?, delivery_address = ?, track_number = ?, status = ? WHERE id = ?',
+            [date_purchase, customer_id, delivery_address, track_number, status, id]
+        );
+        return result.affectedRows;
     } catch (error) {
-        throw error
+        throw error;
     } finally {
         connection.release();
     }
-    
 }
 
 async function destroyOrder(id) {
-    const connection = await pool.getConnection()
+    const connection = await pool.getConnection();
     try {
-        const [result] = await connection.execute('DELETE FROM purchase_orders WHERE id = ?', [id])
-        return result.affectedRows
+        
+        const [orderExists] = await connection.execute('SELECT 1 FROM purchase_orders WHERE id = ?', [id]);
+        if (orderExists.length === 0) {
+            throw new Error(`Commande avec l'ID ${id} introuvable.`);
+        }
+
+        
+        const [paymentExists] = await connection.execute('SELECT 1 FROM payements WHERE order_id = ?', [id]);
+        if (paymentExists.length > 0) {
+            
+            throw new Error('Cette commande ne peut pas être supprimée car elle a déjà été payée.');
+        }
+
+        
+        const [result] = await connection.execute('DELETE FROM purchase_orders WHERE id = ?', [id]);
+        return result.affectedRows;
     } catch (error) {
-        throw error
+        throw error;
     } finally {
         connection.release();
     }
 }
+
 
 async function addDetail(order_id, product_id, quantity, price){
     const connection = await pool.getConnection()
