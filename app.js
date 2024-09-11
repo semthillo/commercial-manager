@@ -31,7 +31,8 @@ async function main() {
         switch (choix) {
           case "1":
             const customer = await customerModule.getCustomer();
-            console.log(customer);
+            console.table(customer);
+            
             break;
 
           case "2":
@@ -46,6 +47,7 @@ async function main() {
               phone
             );
             console.log(`Etudiant ajouté avec l'id ${customerId}`);
+            main()
             break;
 
           case "3":
@@ -69,6 +71,7 @@ async function main() {
               newPhone
             );
             console.log("Client modifié");
+            main()
             break;
           case "4":
             const deleteId = readlineSync.question(
@@ -76,6 +79,7 @@ async function main() {
             );
             await customerModule.destroyCustomer(deleteId);
             console.log("Client supprimé");
+            main()
             break;
           case "5":
             main();
@@ -86,6 +90,7 @@ async function main() {
 
           default:
             console.log("Veuillez choisir une option entre 1 et 6");
+            main()
             break;
         }
         break;
@@ -124,6 +129,7 @@ async function main() {
               status
             );
             console.log(`Produit ajouté avec l'id ${productId}`);
+            main()
             break;
 
           case "3":
@@ -161,6 +167,7 @@ async function main() {
               newStatus
             );
             console.log("produit modifié");
+            main()
             break;
           case "4":
             const deleteId = readlineSync.question(
@@ -168,6 +175,7 @@ async function main() {
             );
             await productModule.destroyProduct(deleteId);
             console.log("Produit supprimé");
+            main()
             break;
           case "5":
             main();
@@ -323,7 +331,7 @@ async function main() {
                 console.error("Erreur lors de l'ajout du détail:", err);
               }
             }
-
+            main()
             break;
 
           case "3":
@@ -414,7 +422,7 @@ async function main() {
             const orde = await orderModule.updateOrder(
               updateId,
               newDate,
-              customerId,
+              newCustomerId,
               newAdress,
               newTrack,
               newStatus
