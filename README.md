@@ -1,6 +1,6 @@
-# ManagerApp
+# Commercial-Manager
 
-Bienvenue dans **ManagerApp** ! Ce projet est une application de gestion pour les clients, produits, commandes et paiements.
+Bienvenue dans **Commercial-Manager** ! Ce projet est une application de gestion pour les clients, produits, commandes et paiements.
 
 ## Table des matières
 
@@ -12,7 +12,7 @@ Bienvenue dans **ManagerApp** ! Ce projet est une application de gestion pour le
 
 ## Introduction
 
-ManagerApp est une application en ligne de commande qui permet de gérer les opérations suivantes :
+Commercial-Manager est une application en ligne de commande qui permet de gérer les opérations suivantes :
 
 - **Clients** : Ajouter, modifier, supprimer et lister les clients.
 - **Produits** : Ajouter, modifier, supprimer et lister les produits.
