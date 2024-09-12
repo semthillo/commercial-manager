@@ -2,11 +2,9 @@ const readlineSync = require("readline-sync");
 const customerModule = require("./src/customerManager");
 const productModule = require("./src/productManager");
 const orderModule = require("./src/orderManager");
-const paymentModule = require("./src/payementManager")
+const paymentModule = require("./src/payementManager");
 
 async function main() {
- 
-
   try {
     console.log("Bienvenue dans ManaerApp !");
 
@@ -32,7 +30,7 @@ async function main() {
           case "1":
             const customer = await customerModule.getCustomer();
             console.table(customer);
-            
+
             break;
 
           case "2":
@@ -47,7 +45,7 @@ async function main() {
               phone
             );
             console.log(`Etudiant ajouté avec l'id ${customerId}`);
-            main()
+            main();
             break;
 
           case "3":
@@ -71,15 +69,15 @@ async function main() {
               newPhone
             );
             console.log("Client modifié");
-            main()
+            main();
             break;
           case "4":
             const deleteId = readlineSync.question(
               "ID du client à supprimer: "
             );
             await customerModule.destroyCustomer(deleteId);
-            
-            main()
+
+            main();
             break;
           case "5":
             main();
@@ -90,7 +88,7 @@ async function main() {
 
           default:
             console.log("Veuillez choisir une option entre 1 et 6");
-            main()
+            main();
             break;
         }
         break;
@@ -107,7 +105,7 @@ async function main() {
           case "1":
             const products = await productModule.getProduct();
             console.table(products);
-            main()
+            main();
             break;
 
           case "2":
@@ -130,7 +128,7 @@ async function main() {
               status
             );
             console.log(`Produit ajouté avec l'id ${productId}`);
-            main()
+            main();
             break;
 
           case "3":
@@ -168,7 +166,7 @@ async function main() {
               newStatus
             );
             console.log("produit modifié");
-            main()
+            main();
             break;
           case "4":
             const deleteId = readlineSync.question(
@@ -176,7 +174,7 @@ async function main() {
             );
             await productModule.destroyProduct(deleteId);
             console.log("Produit supprimé");
-            main()
+            main();
             break;
           case "5":
             main();
@@ -193,6 +191,7 @@ async function main() {
 
       case "3":
         console.log("1. Liste des commandes");
+        console.log("D. Liste les details d'une commandes");
         console.log("2. Ajouter un commande");
         console.log("3. Modifier un commande");
         console.log("4. Supprimer un commande");
@@ -204,6 +203,15 @@ async function main() {
           case "1":
             const order = await orderModule.getOrder();
             console.table(order);
+            main();
+            break;
+
+          case "D":
+            let det = readlineSync.question("Entrez l'id de la commande: ");
+            det = parseInt(det);
+            const orderDetails = await orderModule.getDetailByOrderId(det);
+            console.table(orderDetails);
+            main();
             break;
 
           case "2":
@@ -332,13 +340,29 @@ async function main() {
                 console.error("Erreur lors de l'ajout du détail:", err);
               }
             }
-            main()
+            main();
             break;
 
           case "3":
-            const updateId = readlineSync.question(
-              `ID de la commande à modifier :  `
-            );
+            const command = await orderModule.getOrderById();
+            let cmdExists = false;
+            let updateId;
+
+            while (!cmdExists) {
+              updateId = readlineSync.question(`Entrez l'id de la commande : `);
+              updateId = parseInt(updateId);
+              for (let i = 0; i < command.length; i++) {
+                if (updateId === command[i]) {
+                  cmdExists = true;
+                  console.log("commande trouvé, id:", updateId);
+                  break;
+                }
+              }
+
+              if (!cmdExists) {
+                console.log("Cette commande n'existe pas, veuillez réessayer.");
+              }
+            }
             const newDate = readlineSync.question(
               "Entrez la nouvelle date de la commande: "
             );
@@ -356,12 +380,13 @@ async function main() {
             );
 
             const newCommande = {
-              date_purchase: newDate,
-              delivery_adress: newAdress,
+              date_purchase: newDate, // Si newDate est vide, utilisez null
               customer_id: newCustomerId,
+              delivery_adress: newAdress,
               track_number: newTrack,
               status: newStatus,
             };
+
             console.log("Nouvelle commande:", newCommande);
 
             const mesNewDetails = [];
@@ -375,24 +400,23 @@ async function main() {
                 `Entrez l'id du produit : `
               );
 
-              
               details.newPrice = readlineSync.question(
-                `Entrez le prix du produit (nombre) : `
+                `Entrez le prix du produit : `
               );
               while (isNaN(details.newPrice) || details.newPrice <= 0) {
                 console.log("Le prix doit être un nombre valide.");
                 details.newPrice = readlineSync.question(
-                  `Entrez le prix du produit (nombre) : `
+                  `Entrez le prix du produit : `
                 );
               }
 
               details.newQuantity = readlineSync.question(
-                `Entrez la quantité du produit (nombre) : `
+                `Entrez la quantité du produit : `
               );
               while (isNaN(details.newQuantity) || details.newQuantity <= 0) {
                 console.log("La quantité doit être un nombre valide.");
                 details.newQuantity = readlineSync.question(
-                  `Entrez la quantité du produit (nombre) : `
+                  `Entrez la quantité du produit : `
                 );
               }
 
@@ -402,57 +426,53 @@ async function main() {
               const newTmp = readlineSync.question(
                 "Appuyez sur : \n A pour ajouter un autre produit; \n S pour enregistrer la commande; \n Z pour quitter : "
               );
+
               switch (newTmp.toUpperCase()) {
                 case "A":
-                  break; 
+                  break; // Continue la boucle pour ajouter un nouveau produit
                 case "S":
-                  newcCmd = false; 
+                  newcCmd = false; // Fin de la boucle
                   break;
                 case "Z":
                   console.log("Commande annulée.");
-                  main();
-                  return; 
+                  return; // Quittez proprement
                 default:
                   console.log("Option non reconnue. Veuillez réessayer.");
                   break;
               }
             }
 
-            console.log("Mise à jour de la commande...");
+            await orderModule.updateOrder(updateId, newCommande);
+            console.log(`Commande avec un nouveau ID : ${updateId} modifiée `);
 
-            const orde = await orderModule.updateOrder(
-              updateId,
-              newDate,
-              newCustomerId,
-              newAdress,
-              newTrack,
-              newStatus
-            );
-            console.log(`Commande modifiée, ID : ${updateId}`);
-
-            
             for (let i = 0; i < mesNewDetails.length; i++) {
               const detail = mesNewDetails[i];
-              console.log(
-                `Modification du détail pour le produit ID: ${detail.produitId}`
-              );
 
-              try {
-                await orderModule.addDetail(
-                  updateId, 
-                  detail.produitId,
-                  detail.newQuantity,
-                  detail.newPrice
+              // Vérification que les valeurs sont valides
+              if (
+                !detail.produitId ||
+                isNaN(detail.newPrice) ||
+                isNaN(detail.newQuantity)
+              ) {
+                console.log(
+                  `Erreur : détail invalide pour le produit ID: ${detail.produitId}`
                 );
-                console.log("Nouveau détail ajouté/modifié:", detail);
-              } catch (err) {
-                console.error("Erreur lors de la modification du détail:", err);
+                continue; // Passez à l'itération suivante si une donnée est invalide
               }
-            }
 
-            console.log(
-              "Toutes les modifications de la commande sont terminées."
-            );
+              console.log(
+                `Ajout d'un nouveau détail pour le produit ID: ${detail.produitId}`
+              );
+              await orderModule.addDetail(
+                updateId, // L'ID de la commande
+                detail.produitId, // ID du produit
+                detail.newQuantity, // Quantité
+                detail.newPrice // Prix
+              );
+              console.log("Détail ajouté avec succès");
+            }
+            main();
+
             break;
 
           case "4":
@@ -461,6 +481,7 @@ async function main() {
             );
             await orderModule.destroyOrder(deleteId);
             console.log("commande supprimé");
+            main();
             break;
           case "5":
             main();
@@ -487,16 +508,28 @@ async function main() {
           case "1":
             const payments = await paymentModule.getPayement();
             console.log(payments);
+            main();
             break;
 
           case "2":
-            
-            const orderId = readlineSync.question(
-              "Entrez l'ID de la commande : "
-            );
-            const datePayement = readlineSync.question(
-              "Date du paiement: "
-            );
+            const command = await orderModule.getOrderById();
+            let cmdExists = false;
+            let orderId;
+
+            while (!cmdExists) {
+              orderId = readlineSync.question(`Entrez l'id de la commande : `);
+              orderId = parseInt(orderId);
+              for (let i = 0; i < command.length; i++) {
+                if (orderId === command[i]) {
+                  cmdExists = true;
+                  console.log("commande trouvé, id:", orderId);
+                }
+              }
+              if (!cmdExists) {
+                console.log("Cette commande n'existe pas, veuillez réessayer.");
+              }
+            }
+            const datePayement = readlineSync.question("Date du paiement: ");
             const amount = readlineSync.questionFloat("Montant du paiement : ");
             const payementMethod = readlineSync.question(
               "Méthode de paiement : "
@@ -509,13 +542,31 @@ async function main() {
               payementMethod
             );
             console.log(`Paiement ajouté avec l'ID ${paymentId}`);
-          
+            main();
             break;
-       
+
           case "3":
-            const updatePayId = readlineSync.question(
-              `ID du paiement à modifier : `
-            );
+            const newCommand = await orderModule.getOrderById();
+            let newCmdExists = false;
+            let newOrderId;
+
+            while (!newCmdExists) {
+              newOrderId = readlineSync.question(
+                `Entrez l'id de la commande à payer : `
+              );
+              newOrderId = parseInt(newOrderId);
+
+              for (let i = 0; i < newCommand.length; i++) {
+                if (newOrderId === newCommand[i]) {
+                  newCmdExists = true;
+                  console.log("Commande trouvée, id:", newOrderId);
+                }
+              }
+
+              if (!newCmdExists) {
+                console.log("Cette commande n'existe pas, veuillez réessayer.");
+              }
+            }
 
             const newDatePayement = readlineSync.question(
               "Nouvelle date du paiement : "
@@ -527,14 +578,18 @@ async function main() {
               "Nouvelle méthode de paiement : "
             );
 
-            await paymentModule.updatePayement(
-              updatePayId,
-             
-              newDatePayement,
-              newAmount,
-              newPayementMethod
-            );
-            console.log("Paiement modifié");
+            const newPayement = {
+              date_payement: newDatePayement,
+              amount: newAmount,
+              payement_method: newPayementMethod,
+              order_id: newOrderId,
+            };
+
+            await paymentModule.updatePayement(newPayement);
+
+            console.log("Paiement modifié avec succès.");
+
+            main();
             break;
 
           case "4":
@@ -543,10 +598,11 @@ async function main() {
             );
             await paymentModule.destroyPayement(deletePayId);
             console.log("Paiement supprimé");
+            main();
             break;
 
           case "5":
-            main(); 
+            main();
             break;
 
           case "6":
@@ -563,10 +619,13 @@ async function main() {
         break;
 
       default:
-          console.log("Veuillez choisir une option entre 1 et 6");
-          break;
+        console.log("Veuillez choisir une option entre 1 et 6");
+        main();
+        break;
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 main();

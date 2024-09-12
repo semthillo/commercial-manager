@@ -24,31 +24,30 @@ async function addPayement(order_id, date_payement, amount, payement_method){
     }
 } 
 
-async function updatePayement(id, order_id, date_payement, amount, payement_method) {
+async function updatePayement(payementDetails) {
     const connection = await pool.getConnection();
     try {
-        // Vérifier si l'ID du paiement existe
-        const [payementExists] = await connection.execute('SELECT 1 FROM payements WHERE id = ?', [id]);
-        if (payementExists.length === 0) {
-            throw new Error(`Paiement avec l'ID ${id} introuvable.`);
-        }
+        const { date_payement, amount, payement_method, order_id } = payementDetails;
 
+        
         const [result] = await connection.execute(
-            'UPDATE payements SET order_id = ?, date_payement = ?, amount = ?, payement_method = ? WHERE id = ?',
-            [order_id, date_payement, amount, payement_method, id]
+            'UPDATE payements SET date_payement = ?, amount = ?, payement_method = ? WHERE order_id = ?',
+            [date_payement, amount, payement_method, order_id]
         );
         return result.affectedRows;
     } catch (error) {
+        console.error("Erreur de modification");
         throw error;
     } finally {
         connection.release();
     }
 }
 
+
 async function destroyPayement(id) {
     const connection = await pool.getConnection();
     try {
-        // Vérifier si l'ID du paiement existe
+        
         const [payementExists] = await connection.execute('SELECT 1 FROM payements WHERE id = ?', [id]);
         if (payementExists.length === 0) {
             throw new Error(`Paiement avec l'ID ${id} introuvable.`);
@@ -57,7 +56,7 @@ async function destroyPayement(id) {
         const [result] = await connection.execute('DELETE FROM payements WHERE id = ?', [id]);
         return result.affectedRows;
     } catch (error) {
-        throw error;
+        throw error
     } finally {
         connection.release();
     }

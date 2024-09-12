@@ -63,29 +63,45 @@ async function addOrder(order) {
 }
 
 
-
-
-async function updateOrder(id, date_purchase, customer_id, delivery_address, track_number, status) {
+async function getOrderById() {
     const connection = await pool.getConnection();
-    try {
+    const [orderExists] = await connection.execute('SELECT id FROM purchase_orders ');
+
+    const ids = orderExists.map(produ => produ.id); 
+    
+    return ids;
+    
+
         
-        const [orderExists] = await connection.execute('SELECT 1 FROM purchase_orders WHERE id = ?', [id]);
-        if (orderExists.length === 0) {
-            throw new Error(`Commande avec l'ID ${id} introuvable.`);
-        }
-
-        const [result] = await connection.execute(
-            'UPDATE purchase_orders SET date_purchase = ?, customer_id = ?, delivery_address = ?, track_number = ?, status = ? WHERE id = ?',
-            [date_purchase, customer_id, delivery_address, track_number, status, id]
-        );
-        return result.affectedRows;
-    } catch (error) {
-        throw error;
-    } finally {
-        connection.release();
+        
+//     }
+//     console.log(`${id}`);
     }
-}
+     getOrderById()
+    
+    
+    
 
+
+
+
+     async function updateOrder(id, orderDetails) {
+        const connection = await pool.getConnection();
+        try {
+            const { date_purchase, customer_id, delivery_adress, track_number, status } = orderDetails;
+    
+            const [result] = await connection.execute(
+                'UPDATE purchase_orders SET date_purchase = ?, customer_id = ?, delivery_adress = ?, track_number = ?, status = ? WHERE id = ?',
+                [date_purchase, customer_id, delivery_adress, track_number, status, id]
+            );
+            return result.affectedRows;
+        } catch (error) {
+            console.error(error)
+        } finally {
+            connection.release();
+        }
+    }
+    
 async function destroyOrder(id) {
     const connection = await pool.getConnection();
     try {
@@ -125,6 +141,22 @@ async function addDetail(order_id, product_id, quantity, price){
     }
 } 
 
+async function updateDetail(id, order_id, product_id, quantity, price) {
+    const connection = await pool.getConnection();
+    try {
+        const [result] = await connection.execute(
+            'UPDATE order_details SET order_id = ?, product_id = ?, quantity = ?, price = ? WHERE id = ?', 
+            [order_id, product_id, quantity, price, id]  
+        );
+        return result.affectedRows;
+    } catch (error) {
+        console.error(error)
+    } finally {
+        connection.release();
+    }
+}
+
+
 async function getDetailByOrderId(orderId) {
     const connection = await pool.getConnection();
     try {
@@ -146,12 +178,12 @@ async function getDetailByOrderId(orderId) {
       return details;
   
     } catch (error) {
-      console.error("Erreur lors de la récupération des détails:", error);
+      console.error("Erreur lors de la récupération des détail", error);
       return []; 
     }
-    //  finally {
-    //   connection.release(); 
-    // }
+     finally {
+      connection.release(); 
+    }
   }
   
 
@@ -165,6 +197,8 @@ module.exports = {
     getClient,
     addDetail,
     getPrix,
-    getDetailByOrderId
+    getDetailByOrderId,
+    updateDetail,
+    getOrderById
 
 }
