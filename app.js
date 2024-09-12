@@ -78,7 +78,7 @@ async function main() {
               "ID du client à supprimer: "
             );
             await customerModule.destroyCustomer(deleteId);
-            console.log("Client supprimé");
+            
             main()
             break;
           case "5":
@@ -106,7 +106,8 @@ async function main() {
         switch (choix2) {
           case "1":
             const products = await productModule.getProduct();
-            console.log(products);
+            console.table(products);
+            main()
             break;
 
           case "2":
@@ -202,7 +203,7 @@ async function main() {
         switch (choixx) {
           case "1":
             const order = await orderModule.getOrder();
-            console.log(order);
+            console.table(order);
             break;
 
           case "2":
