@@ -30,15 +30,11 @@ async function updateCustomer(id, name, address, email, phone) {
     const connection = await pool.getConnection();
     try {
         
-        const [customer] = await connection.execute('SELECT id FROM customers WHERE id = ?', [id]);
-        if (customer.length === 0) {
-            throw new Error(`Le client avec l'ID ${id} n'existe pas`);
-        }
-
+        
         const [result] = await connection.execute('UPDATE customers SET name = ?, address = ?, email = ?, phone = ? WHERE id = ?', [name, address, email, phone, id]);
         return result.affectedRows;
     } catch (error) {
-        console.error("erreur de suppression")
+        console.error("erreur de suppression", error)
     } finally {
         connection.release();
     }
@@ -69,6 +65,14 @@ async function destroyCustomer(id) {
     }
 }
 
+async function getClient(id) {
+    const connection = await pool.getConnection();
+    const [customer] = await connection.execute('SELECT * FROM customers WHERE id = ?', [id]);
+        if (customer.length === 0) {
+            throw new Error(`Le client avec l'ID ${id} n'existe pas`);
+        }
+        console.log(customer)
+}
 
 
 
@@ -78,6 +82,7 @@ module.exports = {
     getCustomer,
     addCustomer,
     destroyCustomer,
-    updateCustomer
+    updateCustomer,
+    getClient
 
 }

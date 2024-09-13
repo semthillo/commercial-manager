@@ -6,7 +6,7 @@ const paymentModule = require("./src/payementManager");
 
 async function main() {
   try {
-    console.log("Bienvenue dans ManaerApp !");
+    console.log("Bienvenue dans ManagerApp !");
 
     console.log("1. Gerer les Clients");
     console.log("2. Gerer les Produits");
@@ -30,7 +30,7 @@ async function main() {
           case "1":
             const customer = await customerModule.getCustomer();
             console.table(customer);
-
+            main();
             break;
 
           case "2":
@@ -44,14 +44,31 @@ async function main() {
               email,
               phone
             );
-            console.log(`Etudiant ajouté avec l'id ${customerId}`);
+            console.log(`Client ajouté avec l'id ${customerId}`);
             main();
             break;
 
           case "3":
-            const updateId = readlineSync.question(
-              `ID de l'etudiant à modifier :  `
-            );
+            const clients = await orderModule.getClient();
+            let cmdExists = false;
+            let id;
+
+            while (!cmdExists) {
+              id = readlineSync.question(`Entrez l'id du client : `);
+              id = parseInt(id);
+              for (let i = 0; i < clients.length; i++) {
+                if (id === clients[i]) {
+                  cmdExists = true;
+                  console.log("Client trouvé, id:", id);
+                  break;
+                }
+              }
+
+              if (!cmdExists) {
+                console.log("Ce client n'existe pas, veuillez réessayer.");
+              }
+            }
+
             const newName = readlineSync.question("Entrez le  nouveau nom: ");
             const newAdress = readlineSync.question(
               "Nouvelle Adress du client: "
@@ -62,7 +79,7 @@ async function main() {
             );
 
             await customerModule.updateCustomer(
-              updateId,
+              id,
               newName,
               newAdress,
               newEmail,
@@ -113,8 +130,33 @@ async function main() {
             const description = readlineSync.question(
               "description du  produit: "
             );
-            const price = readlineSync.question("prix du produit: ");
-            const stock = readlineSync.questionInt("stock du produit: ");
+            let price;
+            while (true) {
+              price = readlineSync.question("prix du produit: ");
+              if (!isNaN(price) && price.trim() !== "") {
+                price = parseFloat(price);
+                break;
+              }
+              console.log("Le prix doit etre un nombre.");
+            }
+
+            let stock;
+            while (true) {
+              stock = readlineSync.question("stock du produit: ");
+              if (
+                !isNaN(stock) &&
+                Number.isInteger(parseFloat(stock)) &&
+                stock.trim() !== ""
+              ) {
+                stock = parseInt(stock);
+                break;
+              }
+              console.log(
+                "Le stock doit etre un nombre."
+              );
+            }
+
+            console.log(`Prix: ${price}, Stock: ${stock}`);
             const category = readlineSync.question("category du produit: ");
             const barcode = readlineSync.question("barre-code du produit: ");
             const status = readlineSync.question("status du produit: ");
@@ -132,19 +174,56 @@ async function main() {
             break;
 
           case "3":
-            const updateId = readlineSync.question(
-              `ID de l'produit à modifier :  `
-            );
+            const prouit = await productModule.getProduit();
+            let cmdExists = false;
+            let id;
+
+            while (!cmdExists) {
+              id = readlineSync.question(`Entrez l'id du produit : `);
+              id = parseInt(id);
+              for (let i = 0; i < prouit.length; i++) {
+                if (id === prouit[i]) {
+                  cmdExists = true;
+                  console.log("produit trouvé, id:", id);
+                  break;
+                }
+              }
+
+              if (!cmdExists) {
+                console.log("Ce produit n'existe pas, veuillez réessayer.");
+              }
+            }
             const newName = readlineSync.question(
               "Entrez le  nouveau nom du produit: "
             );
             const newDescription = readlineSync.question(
               "Nouvelle description du produit: "
             );
-            const newPrice = readlineSync.question("Nouveau prix du produit: ");
-            const newStock = readlineSync.question(
-              "Nouvelle stock du produit: "
-            );
+            let newPrice;
+            while (true) {
+              newPrice = readlineSync.question("prix du produit: ");
+              if (!isNaN(newPrice) && newPrice.trim() !== "") {
+                newPrice = parseFloat(newPrice);
+                break;
+              }
+              console.log("Le prix doit etre un nombre.");
+            }
+
+            let newStock;
+            while (true) {
+              newStock = readlineSync.question("newStock du produit: ");
+              if (
+                !isNaN(newStock) &&
+                Number.isInteger(parseFloat(newStock)) &&
+                newStock.trim() !== ""
+              ) {
+                newStock = parseInt(newStock);
+                break;
+              }
+              console.log(
+                "Le stock doit etre un nombre."
+              );
+            }
             const newcategory = readlineSync.question(
               "Nouvelle catégorie du produit: "
             );
@@ -156,7 +235,7 @@ async function main() {
             );
 
             await productModule.updateProduct(
-              updateId,
+              id,
               newName,
               newDescription,
               newPrice,
@@ -169,9 +248,26 @@ async function main() {
             main();
             break;
           case "4":
-            const deleteId = readlineSync.question(
-              "ID du client à supprimer: "
-            );
+           
+            const proui = await productModule.getProduit();
+            let cExists = false;
+            let  deleteId;
+
+            while (!cExists) {
+              deleteId = readlineSync.question(`ID du produit à supprimer: `);
+              deleteId = parseInt(deleteId);
+              for (let i = 0; i < proui.length; i++) {
+                if (deleteId === proui[i]) {
+                  cExists = true;
+                  console.log("produit trouvé, Id:", deleteId);
+                  break;
+                }
+              }
+
+              if (!cExists) {
+                console.log("Ce produit n'existe pas, veuillez réessayer.");
+              }
+            }
             await productModule.destroyProduct(deleteId);
             console.log("Produit supprimé");
             main();
@@ -207,9 +303,28 @@ async function main() {
             break;
 
           case "D":
-            let det = readlineSync.question("Entrez l'id de la commande: ");
-            det = parseInt(det);
-            const orderDetails = await orderModule.getDetailByOrderId(det);
+           
+
+            const comman = await orderModule.getOrderById();
+            let cmdExist = false;
+            let cId;
+
+            while (!cmdExist) {
+              cId = readlineSync.question(`Entrez l'id de la commande : `);
+              cId = parseInt(cId);
+              for (let i = 0; i < comman.length; i++) {
+                if (cId === comman[i]) {
+                  cmdExist = true;
+                  console.log("commande trouvé, id:", cId);
+                  break;
+                }
+              }
+
+              if (!cmdExist) {
+                console.log("Cette commande n'existe pas, veuillez réessayer.");
+              }
+            }
+            const orderDetails = await orderModule.getDetailByOrderId(cId);
             console.table(orderDetails);
             main();
             break;
@@ -288,12 +403,28 @@ async function main() {
                 }
               }
 
-              details.price = readlineSync.question(
-                `Entrez le prix du produit : `
-              );
-              details.quantity = readlineSync.question(
-                `Entrez la quantité du produit : `
-              );
+              
+              
+              while (true) {
+                details.price = readlineSync.question("Entrez le prix du produit : ");
+                if (!isNaN(details.price) && details.price.trim() !== "") {
+                  details.price = parseFloat(details.price); 
+                  break; 
+                }
+                console.log("Veuillez entrer un nombre valide pour le prix.");
+              }
+              
+              while (true) {
+                details.quantity = readlineSync.question("Entrez la quantité du produit : ");
+                if (!isNaN(details.quantity) && Number.isInteger(parseFloat(details.quantity)) && details.quantity.trim() !== "") {
+                  details.quantity = parseInt(details.quantity); 
+                  break; 
+                }
+                console.log("Veuillez entrer un nombre entier valide pour la quantité.");
+              }
+              
+              console.log(`Prix: ${details.price}, Quantité: ${details.quantity}`);
+              
 
               mesDetails.push(details);
               console.log("Détails de la commande:", mesDetails);
@@ -337,7 +468,7 @@ async function main() {
                 );
                 console.log("Détail enregistré:", detail);
               } catch (err) {
-                console.error("Erreur lors de l'ajout du détail:", err);
+                console.error("Erreur lors de l'ajout du détail:");
               }
             }
             main();
@@ -369,9 +500,25 @@ async function main() {
             const newAdress = readlineSync.question(
               "Nouvelle adresse de la livraison: "
             );
-            const newCustomerId = readlineSync.question(
-              "Nouveau ID du client: "
-            );
+            const newClient = await orderModule.getClient();
+            let newClientExists = false;
+            let nCustomerId;
+
+            while (!newClientExists) {
+              nCustomerId = readlineSync.questionInt(`l'id du newClient: `);
+
+              for (let i = 0; i < newClient.length; i++) {
+                if (nCustomerId === newClient[i]) {
+                  newClientExists = true;
+                  console.log("newClient trouvé, id:", nCustomerId);
+                  break;
+                }
+              }
+
+              if (!newClientExists) {
+                console.log("Ce newClient n'existe pas, veuillez réessayer.");
+              }
+            }
             const newTrack = readlineSync.question(
               "Nouveau numéro de la commande : "
             );
@@ -380,8 +527,8 @@ async function main() {
             );
 
             const newCommande = {
-              date_purchase: newDate, // Si newDate est vide, utilisez null
-              customer_id: newCustomerId,
+              date_purchase: newDate, 
+              customer_id: nCustomerId,
               delivery_adress: newAdress,
               track_number: newTrack,
               status: newStatus,
@@ -396,9 +543,29 @@ async function main() {
               const details = {};
               console.log("Entrez un nouveau détail de la commande: ");
 
-              details.produitId = readlineSync.question(
-                `Entrez l'id du produit : `
-              );
+              const produit = await productModule.getProduit();
+              let produitExists = false;
+              let produitId;
+
+              while (!produitExists) {
+                produitId = details.produitId = readlineSync.question(
+                  `Entrez l'id du produit : `
+                );
+
+                produitId = parseInt(details.produitId);
+
+                for (let i = 0; i < produit.length; i++) {
+                  if (produitId === produit[i]) {
+                    produitExists = true;
+                    console.log("Produit trouvé, id:", produitId);
+                    break;
+                  }
+                }
+
+                if (!produitExists) {
+                  console.log("Ce produit n'existe pas, veuillez réessayer.");
+                }
+              }
 
               details.newPrice = readlineSync.question(
                 `Entrez le prix du produit : `
@@ -429,13 +596,13 @@ async function main() {
 
               switch (newTmp.toUpperCase()) {
                 case "A":
-                  break; // Continue la boucle pour ajouter un nouveau produit
+                  break; 
                 case "S":
-                  newcCmd = false; // Fin de la boucle
+                  newcCmd = false; 
                   break;
                 case "Z":
                   console.log("Commande annulée.");
-                  return; // Quittez proprement
+                  return; 
                 default:
                   console.log("Option non reconnue. Veuillez réessayer.");
                   break;
@@ -457,15 +624,15 @@ async function main() {
                 console.log(
                   `Erreur : détail invalide pour le produit ID: ${detail.produitId}`
                 );
-                continue; // Passez à l'itération suivante si une donnée est invalide
+                continue; 
               }
 
               console.log(
                 `Ajout d'un nouveau détail pour le produit ID: ${detail.produitId}`
               );
               await orderModule.addDetail(
-                updateId, // L'ID de la commande
-                detail.produitId, // ID du produit
+                updateId, 
+                detail.produitId, 
                 detail.newQuantity, // Quantité
                 detail.newPrice // Prix
               );
@@ -476,11 +643,27 @@ async function main() {
             break;
 
           case "4":
-            const deleteId = readlineSync.question(
-              "ID de la commande à supprimer: "
-            );
+            const commandes = await orderModule.getOrderById();
+            let cmdExistss = false;
+            let deleteId;
+
+            while (!cmdExistss) {
+              deleteId = readlineSync.question(`Entrez l'id de la commandes : `);
+              deleteId = parseInt(deleteId);
+              for (let i = 0; i < commandes.length; i++) {
+                if (deleteId === commandes[i]) {
+                  cmdExistss = true;
+                  console.log("commande trouvé, id:", deleteId);
+                  break;
+                }
+              }
+
+              if (!cmdExistss) {
+                console.log("Cette commande n'existe pas, veuillez réessayer.");
+              }
+            }
             await orderModule.destroyOrder(deleteId);
-            console.log("commande supprimé");
+            
             main();
             break;
           case "5":
@@ -530,7 +713,15 @@ async function main() {
               }
             }
             const datePayement = readlineSync.question("Date du paiement: ");
-            const amount = readlineSync.questionFloat("Montant du paiement : ");
+            let amount;
+            while (true) {
+              amount = readlineSync.question("le montant: ");
+              if (!isNaN(amount) && amount.trim() !== "") {
+                amount = parseFloat(amount);
+                break;
+              }
+              console.log("Le montant doit etre un nombre.");
+            }
             const payementMethod = readlineSync.question(
               "Méthode de paiement : "
             );
@@ -571,9 +762,15 @@ async function main() {
             const newDatePayement = readlineSync.question(
               "Nouvelle date du paiement : "
             );
-            const newAmount = readlineSync.questionFloat(
-              "Nouveau montant du paiement : "
-            );
+            let newAmount;
+            while (true) {
+              newAmount = readlineSync.question("le montant: ");
+              if (!isNaN(newAmount) && newAmount.trim() !== "") {
+                newAmount = parseFloat(newAmount);
+                break;
+              }
+              console.log("Le montant doit etre un nombre.");
+            }
             const newPayementMethod = readlineSync.question(
               "Nouvelle méthode de paiement : "
             );
@@ -593,10 +790,28 @@ async function main() {
             break;
 
           case "4":
-            const deletePayId = readlineSync.question(
-              "ID du paiement à supprimer: "
-            );
-            await paymentModule.destroyPayement(deletePayId);
+
+          const pay = await paymentModule.getpay();
+          let cmdExistss = false;
+          let deleteId;
+
+          while (!cmdExistss) {
+            deleteId = readlineSync.question(`Entrez l'id du payement : `);
+            deleteId = parseInt(deleteId);
+            for (let i = 0; i < pay.length; i++) {
+              if (deleteId === pay[i]) {
+                cmdExistss = true;
+                console.log("payement trouvé, id:", deleteId);
+                break;
+              }
+            }
+
+            if (!cmdExistss) {
+              console.log("Cette payement n'existe pas, veuillez réessayer.");
+            }
+          }
+
+            await paymentModule.destroyPayement(deleteId);
             console.log("Paiement supprimé");
             main();
             break;
@@ -611,6 +826,7 @@ async function main() {
 
           default:
             console.log("Veuillez choisir une option entre 1 et 6");
+            main();
             break;
         }
         break;

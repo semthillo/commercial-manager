@@ -42,17 +42,32 @@ async function updatePayement(payementDetails) {
         connection.release();
     }
 }
+async function getpay() {
+    
+       const connection = await pool.getConnection();
+       
+        const [payementExists] = await connection.execute('SELECT id FROM payements ');
+       
+        const ids = payementExists.map(produ => produ.id); 
+    
+    return ids;
+       
+       
+    
+    }
+        
+    
 
+
+
+getpay()
 
 async function destroyPayement(id) {
     const connection = await pool.getConnection();
+    
     try {
         
-        const [payementExists] = await connection.execute('SELECT 1 FROM payements WHERE id = ?', [id]);
-        if (payementExists.length === 0) {
-            throw new Error(`Paiement avec l'ID ${id} introuvable.`);
-        }
-
+        
         const [result] = await connection.execute('DELETE FROM payements WHERE id = ?', [id]);
         return result.affectedRows;
     } catch (error) {
@@ -66,6 +81,7 @@ module.exports = {
     getPayement,
     addPayement,
     destroyPayement,
-    updatePayement
+    updatePayement,
+    getpay
 
 }

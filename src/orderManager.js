@@ -74,10 +74,9 @@ async function getOrderById() {
 
         
         
-//     }
-//     console.log(`${id}`);
+
     }
-     getOrderById()
+     
     
     
     
@@ -105,24 +104,11 @@ async function getOrderById() {
 async function destroyOrder(id) {
     const connection = await pool.getConnection();
     try {
-        
-        const [orderExists] = await connection.execute('SELECT 1 FROM purchase_orders WHERE id = ?', [id]);
-        if (orderExists.length === 0) {
-            throw new Error(`Commande avec l'ID ${id} introuvable.`);
-        }
-
-        
-        const [paymentExists] = await connection.execute('SELECT 1 FROM payements WHERE order_id = ?', [id]);
-        if (paymentExists.length > 0) {
-            
-            throw new Error('Cette commande ne peut pas être supprimée car elle a déjà été payée.');
-        }
-
-        
         const [result] = await connection.execute('DELETE FROM purchase_orders WHERE id = ?', [id]);
+        console.log("commande supprimé");
         return result.affectedRows;
     } catch (error) {
-        throw error;
+        console.error("erreur de suppression", error)
     } finally {
         connection.release();
     }
@@ -173,12 +159,12 @@ async function getDetailByOrderId(orderId) {
         
       }));
   
-      console.log(details); 
+      
   
       return details;
   
     } catch (error) {
-      console.error("Erreur lors de la récupération des détail", error);
+      console.error("Erreur lors de la récupération des détail");
       return []; 
     }
      finally {
@@ -187,7 +173,7 @@ async function getDetailByOrderId(orderId) {
   }
   
 
-getDetailByOrderId (1037)
+
 
 module.exports = {
     getOrder,
