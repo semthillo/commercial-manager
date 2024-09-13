@@ -30,7 +30,7 @@ Commercial-Manager est une application en ligne de commande qui permet de gérer
 2. Accédez au répertoire du projet :
 
     ```bash
-    cd commercial-manager.
+    cd commercial-manager
     ```
 
 3. Installez les dépendances :
@@ -39,13 +39,42 @@ Commercial-Manager est une application en ligne de commande qui permet de gérer
     npm install
     ```
 
-## Utilisation
+4. Configurez la base de données MySQL :
 
-Pour démarrer l'application, exécutez la commande suivante :
+   - Créez une base de données dans MySQL (par exemple `commercial_manager`).
 
-```bash
-node app.js
-```
+   - Assurez-vous que vos informations de connexion MySQL (hôte, utilisateur, mot de passe, nom de la base de données) sont correctement définies dans le fichier `db.js`. Voici un exemple du fichier `db.js` :
+
+    ```javascript
+    const mysql = require('mysql2/promise');
+
+    const connPool = mysql.createPool({
+      host: 'localhost', // Remplacez par votre hôte MySQL si différent
+      user: 'root',      // Remplacez par votre nom d'utilisateur MySQL
+      password: '499756sem', // Remplacez par votre mot de passe MySQL
+      database: 'commercial_manager', // Remplacez par le nom de votre base de données
+      connectTimeout: 2000000,
+    });
+
+    module.exports = connPool;
+    ```
+
+5. Initialisez la base de données :
+
+   Si vous avez un script de création de tables ou de migration, exécutez-le après avoir configuré la connexion à la base de données.
+
+    ```bash
+    node db_init.js
+    ```
+
+   **Note** : Si vous n'avez pas encore créé de script pour l'initialisation des tables, assurez-vous de le faire en créant un fichier `db_init.js` qui contient les instructions SQL pour créer les tables (clients, produits, commandes, paiements, etc.).
+
+6. Démarrez l'application :
+
+    ```bash
+    node app.js
+    ```
+
 
 # Menu Principal
 
