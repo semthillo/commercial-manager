@@ -34,7 +34,7 @@ async function updateCustomer(id, name, address, email, phone) {
         const [result] = await connection.execute('UPDATE customers SET name = ?, address = ?, email = ?, phone = ? WHERE id = ?', [name, address, email, phone, id]);
         return result.affectedRows;
     } catch (error) {
-        console.error("erreur de suppression", error)
+        console.error("erreur de suppression")
     } finally {
         connection.release();
     }

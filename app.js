@@ -840,7 +840,7 @@ async function main() {
         break;
     }
   } catch (error) {
-    console.error(error);
+    console.error("une Erreur est survenue veuillez relancer l'application");
   }
 }
 

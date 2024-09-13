@@ -34,7 +34,7 @@ async function getPrix(price) {
   
       return prices;  
     } catch (err) {
-      console.error("Erreur lors de la récupération du prix:", err);
+      console.error("Erreur lors de la récupération du prix:");
     } finally {
       connection.release();  
     }
@@ -55,7 +55,7 @@ async function addOrder(order) {
          
         return result.insertId;
     } catch (error) {
-        console.error("Error inserting order:", error);  
+        console.error("Error inserting order:");  
         throw error;
     } finally {
         connection.release();
@@ -95,7 +95,7 @@ async function getOrderById() {
             );
             return result.affectedRows;
         } catch (error) {
-            console.error(error)
+            console.error("Erreur de modification")
         } finally {
             connection.release();
         }
@@ -108,7 +108,7 @@ async function destroyOrder(id) {
         console.log("commande supprimé");
         return result.affectedRows;
     } catch (error) {
-        console.error("erreur de suppression", error)
+        console.error("erreur de suppression")
     } finally {
         connection.release();
     }
@@ -136,7 +136,7 @@ async function updateDetail(id, order_id, product_id, quantity, price) {
         );
         return result.affectedRows;
     } catch (error) {
-        console.error(error)
+        console.error("Erreur de modification de detail")
     } finally {
         connection.release();
     }
