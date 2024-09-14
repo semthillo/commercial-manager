@@ -615,7 +615,7 @@ async function main() {
             for (let i = 0; i < mesNewDetails.length; i++) {
               const detail = mesNewDetails[i];
 
-              // Vérification que les valeurs sont valides
+              
               if (
                 !detail.produitId ||
                 isNaN(detail.newPrice) ||
@@ -633,8 +633,8 @@ async function main() {
               await orderModule.addDetail(
                 updateId, 
                 detail.produitId, 
-                detail.newQuantity, // Quantité
-                detail.newPrice // Prix
+                detail.newQuantity,
+                detail.newPrice
               );
               console.log("Détail ajouté avec succès");
             }
@@ -840,7 +840,7 @@ async function main() {
         break;
     }
   } catch (error) {
-    console.error("une Erreur est survenue veuillez relancer l'application");
+    console.error("une Erreur est survenue veuillez relancer l'application", error);
   }
 }
 
